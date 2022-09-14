@@ -50,13 +50,10 @@ public class IdGenerator {
     }
 
     protected ServiceInstance leaderInstance() {
-        final String leaderId = leaderElection.getLeaderInstanceId();
-        if (leaderId == null) {
-            throw new NoLeaderException();
-        }
         final List<ServiceInstance> list = discoveryClient.getInstances("tiny-url-backend");
         if (list != null) {
-            final Optional<ServiceInstance> instance = list.stream().filter(s -> s.getInstanceId().endsWith(leaderId)).findAny();
+            final Optional<ServiceInstance> instance = list.stream()
+            .filter(s -> s.getInstanceId().endsWith(leaderElection.getLeaderInstanceId())).findAny();
             return instance.orElse(null);
         }
         return null;
